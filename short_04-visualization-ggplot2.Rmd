@@ -1,0 +1,425 @@
+---
+title: Data visualization with ggplot2
+author: Data Carpentry contributors
+minutes: 60
+editor_options: 
+  chunk_output_type: console
+---
+
+------------
+
+> ### Learning Objectives
+>
+> * Produce scatter plots, boxplots, and time series plots using ggplot.
+> * Describe what faceting is and apply faceting in ggplot.
+> * Modify the aesthetics of a ggplot plot (including axis labels and color).
+> * Build complex and customized plots from data in a data frame.
+
+--------------
+
+**`ggplot2`** is included in the **`tidyverse`** package.
+
+```{r load-package, message=FALSE, purl=FALSE}
+library(tidyverse)
+```
+
+load the data from prev. lesson
+
+```{r load-data, eval=FALSE, purl=FALSE}
+surveys_complete <- read_csv("data_output/surveys_complete.csv")
+```
+
+look at our data!
+
+```{r}
+head(surveys_complete)
+```
+
+## Plotting with **`ggplot2`**
+
+build a plot using programming commands
+
+- reproducible
+- documented
+- easy to change underlying data
+- easy to change visualisation type
+- reusable
+- helper libraries
+
+
+**`ggplot2`** functions like data in the 'long' format, i.e., a column for every dimension,
+and a row for every observation. Well-structured data will save you lots of time
+when making figures with **`ggplot2`**
+
+
+template:
+
+```
+ggplot(data = <DATA>, mapping = aes(<MAPPINGS>)) +  <GEOM_FUNCTION>()
+```
+
+indicate the data to use
+
+```{r, eval=FALSE, purl=FALSE}
+ggplot(data = surveys_complete)
+```
+
+map variables to axes and colors using the aesthetic (`aes`) function
+
+```{r, eval=FALSE, purl=FALSE}
+ggplot(data = surveys_complete, mapping = aes(x = weight, y = hindfoot_length))
+```
+
+add 'geoms' – graphical representations of the data
+
+many available
+
+use the `+` operator
+
+`+` goes at the end of the line (not begining of next line)
+
+`+` vs `%>%` 
+
+```{r first-ggplot, purl=FALSE}
+ggplot(data = surveys_complete, mapping = aes(x = weight, y = hindfoot_length)) +
+  geom_point()
+```
+
+<!-- Challenge -->
+<!-- Make a scatter (x-y) plot that shows weight measurements collected every year but only for data collected after 1990. Use both the `%>%` and `+` symbols in your answer -->
+<!-- hint: remember the function `filter()` -->
+
+<!-- ```{r} -->
+<!-- surveys_complete_post1990 <- surveys_complete %>% filter(year > 1990) -->
+<!-- ggplot(data = surveys_complete_post1990, mapping = aes(x = year, y = weight)) + -->
+<!--   geom_point() -->
+
+<!-- ``` -->
+
+data investigation time!
+
+start by making a plot like we did 
+then modify it to display more information *or* less information more clearly
+
+overplotting:  add transparency (`alpha`)
+
+```{r adding-transparency, purl=FALSE}
+ggplot(data = surveys_complete, mapping = aes(x = weight, y = hindfoot_length)) +
+    geom_point(alpha = 0.4)
+```
+
+are species different here? -> add color
+
+```{r color-by-species-1, purl=FALSE}
+ggplot(data = surveys_complete, mapping = aes(x = weight, y = hindfoot_length)) +
+    geom_point(alpha = 0.4, aes(color = species_id))
+```
+
+
+> ### Challenge - scatter plot
+
+> ### Challenge: hex plot - optional  
+
+
+## Boxplot
+
+visualize the distribution of weight within each species:
+
+(all we need to do is change the geom!)
+
+all the built-in geoms: https://ggplot2.tidyverse.org/reference/
+
+```{r boxplot, purl=FALSE}
+ggplot(data = surveys_complete, mapping = aes(x = species_id, y = weight)) +
+    geom_boxplot()
+```
+
+hide less: show points
+
+```{r boxplot-with-points, purl=FALSE}
+ggplot(data = surveys_complete, mapping = aes(x = species_id, y = weight)) +
+    geom_boxplot() +
+    geom_jitter(height = 0, alpha = 0.3)
+```
+
+layer order
+
+```{r boxplot-with-points, purl=FALSE}
+ggplot(data = surveys_complete, mapping = aes(x = species_id, y = weight)) +
+    geom_jitter(height = 0, alpha = 0.3)+
+    geom_boxplot() 
+```
+
+color apply to all layers -> put in top `ggplot(aes())`
+
+```{r color-by-species-2, purl=FALSE}
+ggplot(data = surveys_complete, mapping = aes(x = species_id, y = weight, color = species_id)) +
+    geom_jitter(height = 0, alpha = 0.3)+
+    geom_boxplot() 
+```
+
+> ### Challenge: violoin plot
+
+> ### Challenge: box plot alternatives (bonus)
+
+
+## Plotting time series data
+
+Do the values change over years? within a year? seasonality?
+
+### Have the species abundances changed over the years?
+
+abundace = number of observations per species per year
+
+"per" -> group_by()
+
+```{r, purl=FALSE}
+yearly_counts <- surveys_complete %>%
+  group_by(year, species_id) %>% 
+  summarise(n = n())
+```
+
+<!-- could also use count() -->
+
+visualize as line plot with years on x and counts on y
+
+```{r first-time-series, purl=FALSE}
+ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
+     geom_line()
+```
+
+woa! what?
+let's look at data for why
+
+```{r}
+head(yearly_counts, n=20)
+```
+
+need to group data by species then draw lines
+
+```{r time-series-by-species, purl=FALSE}
+ggplot(data = yearly_counts, mapping = aes(x = year, y = n, group = species_id)) +
+    geom_line()
+```
+
+which is which? add colors per species
+
+```{r time-series-with-colors, purl=FALSE}
+ggplot(data = yearly_counts, mapping = aes(x = year, y = n, color = species_id)) +
+    geom_line()
+```
+
+not really helpful... 
+
+> ### Challenge: line plot
+
+> ### Challenge: line plot with split-apply-combine - bonus
+
+> ### Challenge: seasonality without facets (bonus bonus)
+
+
+## Faceting
+
+split one plot into multiple plots based on a category in the data
+
+```{r first-facet, purl=FALSE}
+
+ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
+    geom_line() +
+    facet_wrap(.~species_id)
+```
+
+are there sex differences?
+
+back to the data:
+
+```{r, purl=FALSE}
+
+countsByYearBySex <- surveys_complete %>%
+  group_by(year, species_id, sex) %>% 
+  summarise(n = n())
+
+```
+
+plot it
+
+```{r facet-by-species-and-sex, purl=FALSE}
+ ggplot(data = countsByYearBySex, mapping = aes(x = year, y = n, color = sex)) +
+     geom_line() +
+     facet_wrap(.~ species_id)
+```
+
+
+> ### Challenge - recap weight by year
+
+
+
+Can skip: `facet_wrap` vs `facet_grid`
+
+compare how the weights of males and females vs time, plot types
+
+
+```{r average-weight-time-facet-sex-rows, purl=FALSE}
+# One column, facet by rows
+yearly_sex_weight <- surveys_complete %>%
+    group_by(year, sex, species_id, plot_type) %>%
+    summarize(avg_weight = mean(weight))
+
+ggplot(data = yearly_sex_weight, 
+       mapping = aes(x = year, y = avg_weight, color = species_id)) +
+    geom_line() +
+    facet_grid(sex ~ plot_type)
+```
+
+## Themes and Customization
+
+build this up 1 line at a time or share code and walk through
+
+```{r number-species-year-with-full-theme, purl=FALSE}
+
+plotCountsByYearBySex <- ggplot(data = countsByYearBySex, mapping = aes(x = year, y = n, color = sex)) +
+     geom_line() +
+     facet_wrap(.~ species_id) +
+    labs(title = "Observed species in time", # informative title and axis labels
+        x = "Year of observation",
+        y = "Number of individuals") +
+    theme_bw() + #white background looks better printed+
+    theme(panel.grid = element_blank(), # remove grid lines
+          text = element_text(size = 16), # readability: increase font size
+          axis.text.y = element_text(colour = "grey20", size = 12),
+          axis.text.x = element_text(colour = "grey20", size = 12, 
+                                     angle = 90, hjust = 0.5, vjust = 0.5) # rotate x axis, justify
+          )
+
+plotCountsByYearBySex
+```
+
+
+all themes: <http://docs.ggplot2.org/current/ggtheme.html>
+
+popular: `theme_minimal()` , `theme_light()` 
+
+`ggplot2` cheat sheet to improve the plot.
+
+save plot e.g. for manuscript 
+
+```{r}
+
+dir.create(path = "fig_output")
+ggsave(filename = "fig_output/countsByYearBySex.png",
+       plot = plotCountsByYearBySex, 
+       width = 15, height = 10,dpi = 300)
+
+```
+
+
+save theme to apply to next plot
+
+```{r number-species-year-with-right-labels-xfont-orientation, purl=FALSE}
+grey_theme <-theme(axis.text.y = element_text(colour = "grey20", size = 12),
+                   axis.text.x = element_text(colour = "grey20", size = 12, 
+                                              angle = 90, hjust = 0.5, vjust = 0.5),
+                   text = element_text(size = 16))
+
+ggplot(surveys_complete, aes(x = species_id, y = hindfoot_length)) +
+    geom_boxplot() +
+    grey_theme
+
+```
+
+> ### Challenge
+> 
+> With all of this information in hand, please take another five minutes to
+> either improve one of the plots generated in this exercise or create a
+> beautiful graph of your own. Use the RStudio [**`ggplot2`** cheat sheet](https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf)
+> for inspiration. Here are some ideas:
+>
+> * See if you can change the thickness of the lines.
+> * Can you find a way to change the name of the legend? What about its labels?
+> * Try using a different color palette (see
+>   http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/).
+
+## Arranging plots
+
+just demo this?
+
+figure that contains multiple plots using different variables or even different data frames
+
+**`gridExtra`** package allows us to combine separate ggplots into a single figure using `grid.arrange()`:
+
+```{r install-gridextra, message=FALSE, purl=TRUE, eval=FALSE}
+install.packages("gridExtra")
+```
+
+```{r gridarrange-example, message=FALSE, purl=FALSE, fig.width=10}
+library(gridExtra)
+
+spp_weight_boxplot <- ggplot(data = surveys_complete, 
+                             mapping = aes(x = species_id, y = weight)) +
+  geom_boxplot() +
+  labs(x="Species", y= "Weight (g)") +
+  scale_y_log10() + 
+  grey_theme
+
+spp_count_plot <- ggplot(data = yearly_counts, 
+                         mapping = aes(x = year, y = n, color = species_id)) +
+  geom_line() + 
+  labs(x="Year", y= "Abundance") +
+  grey_theme
+
+grid.arrange(spp_weight_boxplot, spp_count_plot, ncol = 2, widths = c(4, 6))
+
+combo_plot <- grid.arrange(spp_weight_boxplot, spp_count_plot, ncol = 2, widths = c(4, 6))
+
+ggsave("fig_output/combo_plot_abun_weight.png", combo_plot, width = 10, dpi = 300)
+
+```
+
+
+Note: The parameters `width` and `height` also determine the font size in the saved plot.
+
+
+```{r final-challenge, eval=FALSE, purl=TRUE, echo=FALSE}
+### Final plotting challenge:
+##  With all of this information in hand, please take another five
+##  minutes to either improve one of the plots generated in this
+##  exercise or create a beautiful graph of your own. Use the RStudio
+##  ggplot2 cheat sheet for inspiration:
+##  https://www.rstudio.com/wp-content/uploads/2015/08/ggplot2-cheatsheet.pdf
+```
+
+# Other
+
+The `+` in the **`ggplot2`** package is particularly useful because it allows you
+to modify existing `ggplot` objects. This means you can easily set up plot
+templates and conveniently explore different types of plots, so the above
+plot can also be generated with code like this:
+
+```{r, first-ggplot-with-plus, eval=FALSE, purl=FALSE}
+# Assign plot to a variable
+surveys_plot <- ggplot(data = surveys_complete, 
+                       mapping = aes(x = weight, y = hindfoot_length))
+
+# Draw the plot
+surveys_plot + 
+    geom_point()
+```
+
+```{r, eval=FALSE, purl=TRUE, echo=FALSE, purl=FALSE}
+# Create a ggplot and draw it
+surveys_plot <- ggplot(data = surveys_complete, mapping = aes(x = weight, y = hindfoot_length))
+surveys_plot + 
+    geom_point()
+```
+
+
+------------
+
+> ### Learning Objectives
+>
+> * Produce scatter plots, boxplots, and time series plots using ggplot.
+> * Describe what faceting is and apply faceting in ggplot.
+> * Modify the aesthetics of a ggplot plot (including axis labels and color).
+> * Build complex and customized plots from data in a data frame.
+
+--------------
