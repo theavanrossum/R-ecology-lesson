@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Thea Van Rossum" />
+
+
+<title>Data visualization with ggplot2</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link rel="shortcut icon" href="favicon/favicon.ico">
+<link rel="icon" sizes="16x16 32x32 64x64" href="favicon/favicon.ico">
+<link rel="icon" type="image/png" sizes="196x196" href="favicon/favicon-192.png">
+<link rel="icon" type="image/png" sizes="160x160" href="favicon/favicon-160.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon/favicon-64.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
+<link rel="apple-touch-icon" href="favicon/favicon-57.png">
+<link rel="apple-touch-icon" sizes="114x114" href="favicon/favicon-114.png">
+<link rel="apple-touch-icon" sizes="72x72" href="favicon/favicon-72.png">
+<link rel="apple-touch-icon" sizes="144x144" href="favicon/favicon-144.png">
+<link rel="apple-touch-icon" sizes="60x60" href="favicon/favicon-60.png">
+<link rel="apple-touch-icon" sizes="120x120" href="favicon/favicon-120.png">
+<link rel="apple-touch-icon" sizes="76x76" href="favicon/favicon-76.png">
+<link rel="apple-touch-icon" sizes="152x152" href="favicon/favicon-152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/favicon-180.png">
+<meta name="msapplication-TileColor" content="#FFFFFF">
+<meta name="msapplication-TileImage" content="favicon/favicon-144.png">
+<meta name="msapplication-config" content="favicon/browserconfig.xml">
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script>
+  $( function() {
+  $( ".accordion" ).accordion({
+      heightStyle: "content",
+      active: false,
+      collapsible: true
+    });
+  } );
+</script>
+
+<script>
+  <!-- search menu pop-up --->
+  $(function() {
+    function slideToggle() {
+      $("#search-box").toggle("slide", 500);
+  };
+  $("#search-icon").on("click", function() {
+  slideToggle();
+  });
+  });
+</script>
+
+
+<!-- add  Algolia DocSearch -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="00-before-we-start.html">Before we start</a>
+</li>
+<li>
+  <a href="01-intro-to-r.html">Intro to R</a>
+</li>
+<li>
+  <a href="02-starting-with-data.html">Starting with data</a>
+</li>
+<li>
+  <a href="03-dplyr.html">Manipulating data frames</a>
+</li>
+<li>
+  <a href="04-visualization-ggplot2.html">Visualizing data</a>
+</li>
+<li>
+  <a href="05-r-and-databases.html">R and SQL</a>
+</li>
+<li>
+  <a href="code-handout.R">Code Handout</a>
+</li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+	<li class="search">
+	  <input id="search-box" type="text"  placeholder="Search...">
+	  <input type="submit">
+	</li>
+	<li class="search">
+	  <span id ="search-icon"><i class="fa fa-search fa-lg"></i></span>
+	</li>
+        <li>
+	  <a href="https://github.com/datacarpentry/R-ecology-lesson">
+	    <span class="fa fa-github fa-lg"></span>
+	  </a>
+	</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Data visualization with ggplot2</h1>
+<h4 class="author"><em>Thea Van Rossum</em></h4>
+
+</div>
+
+
+<hr />
+<blockquote>
+<h3 id="learning-objectives">Learning Objectives</h3>
+<ul>
+<li>Produce scatter plots, boxplots, and time series plots using ggplot.</li>
+<li>Describe what faceting is and apply faceting in ggplot.</li>
+<li>Modify the aesthetics of a ggplot plot (including axis labels and color).</li>
+<li>Build complex and customized plots from data in a data frame.</li>
+</ul>
+</blockquote>
+<hr />
+<p>required: install.packages(“gridExtra”)</p>
+<p><strong><code>ggplot2</code></strong> is included in the <strong><code>tidyverse</code></strong> package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)</code></pre></div>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 3.5.2</code></pre>
+<p>load the data from prev. lesson</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys_complete &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;/Users/rossum/Dropbox/teaching/Workshops/SCW-DCW/lessonsDC/R-ecology-lesson/data_output/surveys_complete.csv&quot;</span>)</code></pre></div>
+<pre><code>## Parsed with column specification:
+## cols(
+##   record_id = col_double(),
+##   month = col_double(),
+##   day = col_double(),
+##   year = col_double(),
+##   plot_id = col_double(),
+##   species_id = col_character(),
+##   sex = col_character(),
+##   hindfoot_length = col_double(),
+##   weight = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   taxa = col_character(),
+##   plot_type = col_character()
+## )</code></pre>
+<p>look at our data!</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(surveys_complete)</code></pre></div>
+<pre><code>## Classes &#39;spec_tbl_df&#39;, &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;: 30463 obs. of  13 variables:
+##  $ record_id      : num  845 1164 1261 1756 1818 ...
+##  $ month          : num  5 8 9 4 5 7 10 11 1 5 ...
+##  $ day            : num  6 5 4 29 30 4 25 17 16 18 ...
+##  $ year           : num  1978 1978 1978 1979 1979 ...
+##  $ plot_id        : num  2 2 2 2 2 2 2 2 2 2 ...
+##  $ species_id     : chr  &quot;NL&quot; &quot;NL&quot; &quot;NL&quot; &quot;NL&quot; ...
+##  $ sex            : chr  &quot;M&quot; &quot;M&quot; &quot;M&quot; &quot;M&quot; ...
+##  $ hindfoot_length: num  32 34 32 33 32 32 33 30 33 31 ...
+##  $ weight         : num  204 199 197 166 184 206 274 186 184 87 ...
+##  $ genus          : chr  &quot;Neotoma&quot; &quot;Neotoma&quot; &quot;Neotoma&quot; &quot;Neotoma&quot; ...
+##  $ species        : chr  &quot;albigula&quot; &quot;albigula&quot; &quot;albigula&quot; &quot;albigula&quot; ...
+##  $ taxa           : chr  &quot;Rodent&quot; &quot;Rodent&quot; &quot;Rodent&quot; &quot;Rodent&quot; ...
+##  $ plot_type      : chr  &quot;Control&quot; &quot;Control&quot; &quot;Control&quot; &quot;Control&quot; ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   record_id = col_double(),
+##   ..   month = col_double(),
+##   ..   day = col_double(),
+##   ..   year = col_double(),
+##   ..   plot_id = col_double(),
+##   ..   species_id = col_character(),
+##   ..   sex = col_character(),
+##   ..   hindfoot_length = col_double(),
+##   ..   weight = col_double(),
+##   ..   genus = col_character(),
+##   ..   species = col_character(),
+##   ..   taxa = col_character(),
+##   ..   plot_type = col_character()
+##   .. )</code></pre>
+<div id="plotting-with-ggplot2" class="section level1">
+<h1>Plotting with <strong><code>ggplot2</code></strong></h1>
+<p>build a plot using programming commands</p>
+<ul>
+<li>reproducible</li>
+<li>documented</li>
+<li>easy to change underlying data</li>
+<li>easy to change visualisation type</li>
+<li>reusable</li>
+<li>helper libraries</li>
+</ul>
+<p><strong><code>ggplot2</code></strong> functions like data in the ‘long’ format, i.e., a column for every dimension, and a row for every observation. Well-structured data will save you lots of time when making figures with <strong><code>ggplot2</code></strong></p>
+</div>
+<div id="is-there-a-relationship-between-foot-size-and-weight" class="section level1">
+<h1>Is there a relationship between foot size and weight?</h1>
+<p>template:</p>
+<pre><code>ggplot(data = &lt;DATA&gt;, mapping = aes(&lt;MAPPINGS&gt;)) +  &lt;GEOM_FUNCTION&gt;()</code></pre>
+<p>indicate the data to use</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> surveys_complete)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>map variables to axes and colors using the aesthetic (<code>aes</code>) function</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> surveys_complete, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> weight, <span class="dt">y =</span> hindfoot_length))</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>add ‘geoms’ – graphical representations of the data</p>
+<p>many available</p>
+<p>use the <code>+</code> operator</p>
+<p><code>+</code> goes at the end of the line (not begining of next line)</p>
+<p><code>+</code> vs <code>%&gt;%</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> surveys_complete, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> weight, <span class="dt">y =</span> hindfoot_length)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>()</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/first-ggplot-1.png" width="672" /></p>
+<!-- Challenge -->
+<!-- Make a scatter (x-y) plot that shows weight measurements collected every year but only for data collected after 1990. Use both the `%>%` and `+` symbols in your answer -->
+<!-- hint: remember the function `filter()` -->
+<!-- ```{r} -->
+<!-- surveys_complete_post1990 <- surveys_complete %>% filter(year > 1990) -->
+<!-- ggplot(data = surveys_complete_post1990, mapping = aes(x = year, y = weight)) + -->
+<!--   geom_point() -->
+<!-- ``` -->
+<p>data investigation time!</p>
+<p>start by making a plot like we did then modify it to display more information <em>or</em> less information communitcate message more clearly</p>
+</div>
+<div id="is-this-relationship-the-same-for-all-genera" class="section level1">
+<h1>Is this relationship the same for all genera?</h1>
+<p>are genera different here? -&gt; add color</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> surveys_complete, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> weight, <span class="dt">y =</span> hindfoot_length)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="kw">aes</span>(<span class="dt">color =</span> genus))</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/color-by-genus-1-1.png" width="672" /></p>
+<div id="challenge---scatter-plot" class="section level3">
+<h3>Challenge - scatter plot</h3>
+</div>
+<div id="challenge---overplotting---bonus" class="section level3">
+<h3>Challenge - overplotting - bonus</h3>
+</div>
+<div id="challenge-hex-plot---optional" class="section level3">
+<h3>Challenge: hex plot - optional</h3>
+</div>
+</div>
+<div id="boxplot" class="section level1">
+<h1>Boxplot</h1>
+<div id="do-the-genera-have-different-weights" class="section level2">
+<h2>do the genera have different weights?</h2>
+<p>visualize the distribution of weight within each genus</p>
+<p>all the built-in geoms: <a href="https://ggplot2.tidyverse.org/reference/" class="uri">https://ggplot2.tidyverse.org/reference/</a></p>
+<p>use pipe for data</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys_complete <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> genus, <span class="dt">y =</span> weight)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_boxplot</span>()</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/boxplot-1.png" width="672" /></p>
+<p>hide less: show points</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys_complete <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="kw">ggplot</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> genus, <span class="dt">y =</span> weight)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_jitter</span>(<span class="dt">height =</span> <span class="dv">0</span>, <span class="dt">alpha =</span> <span class="fl">0.3</span>)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/boxplot-with-points-1.png" width="672" /></p>
+<p>layer order</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys_complete <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="kw">ggplot</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> genus, <span class="dt">y =</span> weight)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_jitter</span>(<span class="dt">height =</span> <span class="dv">0</span>, <span class="dt">alpha =</span> <span class="fl">0.3</span>)<span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_boxplot</span>() </code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/boxplot-with-points-layer-order-1.png" width="672" /></p>
+<p>color apply to all layers -&gt; put in top <code>ggplot(aes())</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys_complete <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="kw">ggplot</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> genus, <span class="dt">y =</span> weight, <span class="dt">color =</span> genus)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_jitter</span>(<span class="dt">height =</span> <span class="dv">0</span>, <span class="dt">alpha =</span> <span class="fl">0.3</span>)<span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_boxplot</span>() </code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/color-by-genus-2-1.png" width="672" /></p>
+<div id="challenge-violoin-plot" class="section level3">
+<h3>Challenge: violoin plot</h3>
+</div>
+<div id="challenge-box-plot-alternatives-bonus" class="section level3">
+<h3>Challenge: box plot alternatives (bonus)</h3>
+</div>
+</div>
+</div>
+<div id="factors---months" class="section level1">
+<h1>Factors - months</h1>
+<p>Does the number of animals observed in the genera “Onychomys” and “Perognathus” change from month to month across the years studied?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(genus <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Onychomys&quot;</span>, <span class="st">&quot;Perognathus&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(year, month, genus) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">observationsPerGenusPerMonthPerYear =</span> <span class="kw">n</span>())
+
+countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>month,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>month))<span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>get abbrev names of months</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">month.abb</code></pre></div>
+<pre><code>##  [1] &quot;Jan&quot; &quot;Feb&quot; &quot;Mar&quot; &quot;Apr&quot; &quot;May&quot; &quot;Jun&quot; &quot;Jul&quot; &quot;Aug&quot; &quot;Sep&quot; &quot;Oct&quot; &quot;Nov&quot;
+## [12] &quot;Dec&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">month.abb[<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">3</span>)]</code></pre></div>
+<pre><code>## [1] &quot;Jan&quot; &quot;May&quot; &quot;Mar&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear<span class="op">$</span>month <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre></div>
+<pre><code>## [1]  8  9 10 10 11 12</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">month.abb[countsPerMonthPerYear<span class="op">$</span>month] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre></div>
+<pre><code>## [1] &quot;Aug&quot; &quot;Sep&quot; &quot;Oct&quot; &quot;Oct&quot; &quot;Nov&quot; &quot;Dec&quot;</code></pre>
+<p>use this on our data</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">monthNames =</span> month.abb[month]) <span class="op">%&gt;%</span><span class="st">  </span><span class="co">#&lt;------------------ ADDED THIS</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>monthNames,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>monthNames))<span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>need factors to get the right order</p>
+<p>Factors are very useful; contribute to making R particularly well suited to working with data</p>
+<ul>
+<li>Factors represent categorical data.</li>
+<li>ordered or unordered, default = alpha</li>
+<li>stored as integers associated with labels</li>
+<li>factors can only contain a pre-defined set of values, known as <em>levels</em></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sex &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;male&quot;</span>))</code></pre></div>
+<p>R will assign - <code>1</code> to the level <code>&quot;female&quot;</code> (alphabetical order) - <code>2</code> to the level <code>&quot;male&quot;</code></p>
+<p><code>levels()</code></p>
+<p><code>nlevels()</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(sex)</code></pre></div>
+<pre><code>## [1] &quot;female&quot; &quot;male&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nlevels</span>(sex)</code></pre></div>
+<pre><code>## [1] 2</code></pre>
+<p>Sometimes, the order of the factors does not matter, other times you might want to specify the order because it is meaningful (e.g., “low”, “medium”, “high”), it improves your visualization, or it is required by a particular type of analysis. Here, one way to reorder our levels in the <code>sex</code> vector would be:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sex <span class="co"># current order</span></code></pre></div>
+<pre><code>## [1] male   female female male  
+## Levels: female male</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sex &lt;-<span class="st"> </span><span class="kw">factor</span>(sex, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>))
+sex <span class="co"># after re-ordering</span></code></pre></div>
+<pre><code>## [1] male   female female male  
+## Levels: male female</code></pre>
+<p>In R’s memory, these factors are represented by integers (1, 2, 3), but are more informative than integers because factors are self describing: <code>&quot;female&quot;</code>, <code>&quot;male&quot;</code> is more descriptive than <code>1</code>, <code>2</code>. Which one is “male”? You wouldn’t be able to tell just from the integer data. Factors, on the other hand, have this information built in. It is particularly helpful when there are many levels (like the species names in our example dataset).</p>
+<div id="converting-factors" class="section level3">
+<h3>Converting factors</h3>
+<p>If you need to convert a factor to a character vector, you use <code>as.character(x)</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.character</span>(sex)</code></pre></div>
+<pre><code>## [1] &quot;male&quot;   &quot;female&quot; &quot;female&quot; &quot;male&quot;</code></pre>
+<p><code>as.numeric()</code> BAD - gives levels</p>
+<p><code>as.character()</code> then <code>as.numeric()</code></p>
+<p>Another method is to use the <code>levels()</code> function. Compare:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">year_fct &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="dv">1990</span>, <span class="dv">1983</span>, <span class="dv">1977</span>, <span class="dv">1998</span>, <span class="dv">1990</span>))
+<span class="kw">as.numeric</span>(year_fct)               <span class="co"># Wrong! And there is no warning...</span></code></pre></div>
+<pre><code>## [1] 3 2 1 4 3</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(year_fct)) <span class="co"># Works...</span></code></pre></div>
+<pre><code>## [1] 1990 1983 1977 1998 1990</code></pre>
+<p>back to our example</p>
+<p>get the right order for months</p>
+<p>could make this a challenge:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">monthNames =</span> month.abb[month]) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">monthNames =</span> <span class="kw">factor</span>(monthNames,<span class="dt">ordered =</span> T,<span class="dt">levels =</span> month.abb)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#&lt;------------------ ADDED THIS</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>monthNames,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>monthNames))<span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+</div>
+<div id="plotting-time-series-data---groupsummarise-line-plot" class="section level1">
+<h1>Plotting time series data - group/summarise + line plot</h1>
+<p>Do the values change over years? within a year? seasonality?</p>
+<div id="have-the-genus-abundances-changed-over-the-years" class="section level2">
+<h2>Have the genus abundances changed over the years?</h2>
+<p>abundace = number of observations per genus per year</p>
+<p>“per” -&gt; group_by()</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">yearly_counts &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(year, genus) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">countsPerGenusPerYear =</span> <span class="kw">n</span>())</code></pre></div>
+<!-- could also use count() -->
+<p>visualize as line plot with years on x and counts on y</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> yearly_counts, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> countsPerGenusPerYear)) <span class="op">+</span>
+<span class="st">     </span><span class="kw">geom_line</span>()</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/first-time-series-1.png" width="672" /></p>
+<p>woa! what? let’s look at data for why</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(yearly_counts, <span class="dt">n=</span><span class="dv">20</span>)</code></pre></div>
+<pre><code>## # A tibble: 20 x 3
+## # Groups:   year [3]
+##     year genus           countsPerGenusPerYear
+##    &lt;dbl&gt; &lt;chr&gt;                           &lt;int&gt;
+##  1  1977 Chaetodipus                         3
+##  2  1977 Dipodomys                         222
+##  3  1977 Onychomys                           1
+##  4  1977 Perognathus                        22
+##  5  1977 Peromyscus                          2
+##  6  1977 Reithrodontomys                     2
+##  7  1978 Chaetodipus                        23
+##  8  1978 Dipodomys                         629
+##  9  1978 Neotoma                            23
+## 10  1978 Onychomys                          80
+## 11  1978 Perognathus                        33
+## 12  1978 Peromyscus                         14
+## 13  1978 Reithrodontomys                     2
+## 14  1978 Sigmodon                            1
+## 15  1979 Chaetodipus                        19
+## 16  1979 Dipodomys                         394
+## 17  1979 Neotoma                            30
+## 18  1979 Onychomys                         106
+## 19  1979 Perognathus                        16
+## 20  1979 Peromyscus                         22</code></pre>
+<p>need to group data by genus then draw lines</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> yearly_counts, 
+       <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> countsPerGenusPerYear, <span class="dt">group =</span> genus)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_line</span>()</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/time-series-by-genus-1.png" width="672" /></p>
+<p>which is which? add colors per genus</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> yearly_counts, 
+       <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> countsPerGenusPerYear, <span class="dt">color =</span> genus)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_line</span>()</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/time-series-with-colors-1.png" width="672" /></p>
+<div id="challenge-line-plot---median-weight-by-month" class="section level3">
+<h3>Challenge: line plot - median weight by month</h3>
+</div>
+<div id="bonus-challenge-variability-in-trend" class="section level3">
+<h3>Bonus challenge: variability in trend</h3>
+</div>
+</div>
+</div>
+<div id="faceting" class="section level1">
+<h1>Faceting</h1>
+<div id="improve-visibility-of-previous-genustime-plot" class="section level2">
+<h2>improve visibility of previous genus/time plot</h2>
+<p>split one plot into multiple plots based on a category in the data</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> yearly_counts, 
+       <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> countsPerGenusPerYear)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_line</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">facet_wrap</span>(.<span class="op">~</span>genus)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/first-facet-1.png" width="672" /></p>
+</div>
+<div id="are-there-sex-differences-in-the-time-trends" class="section level2">
+<h2>Are there sex differences in the time trends?</h2>
+<p>back to the data:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsByYearBySex &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(year, genus, sex) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">countsPerGenusPerYearPerSex =</span> <span class="kw">n</span>())</code></pre></div>
+<p>plot it</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"> <span class="kw">ggplot</span>(<span class="dt">data =</span> countsByYearBySex, 
+        <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> countsPerGenusPerYearPerSex, <span class="dt">color =</span> sex)) <span class="op">+</span>
+<span class="st">     </span><span class="kw">geom_line</span>() <span class="op">+</span>
+<span class="st">     </span><span class="kw">facet_wrap</span>(.<span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/facet-by-genus-and-sex-1.png" width="672" /></p>
+<div id="challenge---sex-diff-by-species" class="section level3">
+<h3>Challenge - sex diff by species?</h3>
+</div>
+<div id="bonus-challenge-investigate-species-rf" class="section level3">
+<h3>Bonus challenge: investigate species “RF”</h3>
+</div>
+<div id="challenge---weight-by-year---recap" class="section level3">
+<h3>Challenge - weight by year - recap</h3>
+<p>Can skip: <code>facet_wrap</code> vs <code>facet_grid</code></p>
+<p>compare how the weights of males and females vs time, plot types</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># One column, facet by rows</span>
+yearly_sex_weight &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">group_by</span>(year, sex, genus, plot_type) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">avg_weight =</span> <span class="kw">mean</span>(weight))
+
+<span class="kw">ggplot</span>(<span class="dt">data =</span> yearly_sex_weight, 
+       <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> avg_weight, <span class="dt">color =</span> genus)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_line</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">facet_grid</span>(sex <span class="op">~</span><span class="st"> </span>plot_type)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/average-weight-time-facet-sex-rows-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+<div id="themes-and-customization" class="section level1">
+<h1>Themes and Customization</h1>
+<p>lets use that species plot and fix it up</p>
+<p>build this up 1 line at a time or share code and walk through</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plotCountsByYearBySex &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> countsByYearBySexBySpecies,
+                                <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> n, <span class="dt">color =</span> sex)) <span class="op">+</span>
+<span class="st">     </span><span class="kw">geom_line</span>() <span class="op">+</span>
+<span class="st">     </span><span class="kw">facet_wrap</span>(.<span class="op">~</span><span class="st"> </span>species_id) <span class="op">+</span>
+<span class="st">    </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Observed genera in time&quot;</span>, <span class="co"># informative title and axis labels</span>
+        <span class="dt">x =</span> <span class="st">&quot;Year of observation&quot;</span>,
+        <span class="dt">y =</span> <span class="st">&quot;Number of individuals&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="co">#white background looks better printed+</span>
+<span class="st">    </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(), <span class="co"># remove grid lines</span>
+          <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">16</span>), <span class="co"># readability: increase font size</span>
+          <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">colour =</span> <span class="st">&quot;grey20&quot;</span>, <span class="dt">size =</span> <span class="dv">12</span>),
+          <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">colour =</span> <span class="st">&quot;grey20&quot;</span>, <span class="dt">size =</span> <span class="dv">12</span>, 
+                                     <span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">hjust =</span> <span class="fl">0.5</span>, <span class="dt">vjust =</span> <span class="fl">0.5</span>) <span class="co"># rotate x axis, justify</span>
+          )</code></pre></div>
+<pre><code>## Error in ggplot(data = countsByYearBySexBySpecies, mapping = aes(x = year, : object &#39;countsByYearBySexBySpecies&#39; not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plotCountsByYearBySex</code></pre></div>
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;plotCountsByYearBySex&#39; not found</code></pre>
+<p>all themes: <a href="http://docs.ggplot2.org/current/ggtheme.html" class="uri">http://docs.ggplot2.org/current/ggtheme.html</a></p>
+<p>popular: <code>theme_minimal()</code> , <code>theme_light()</code></p>
+<p><code>ggplot2</code> cheat sheet to improve the plot.</p>
+<p>save plot e.g. for manuscript</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir.create</span>(<span class="dt">path =</span> <span class="st">&quot;fig_output&quot;</span>)</code></pre></div>
+<pre><code>## Warning in dir.create(path = &quot;fig_output&quot;): &#39;fig_output&#39; already exists</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggsave</span>(<span class="dt">filename =</span> <span class="st">&quot;fig_output/countsByYearBySex.png&quot;</span>,
+       <span class="dt">plot =</span> plotCountsByYearBySex, 
+       <span class="dt">width =</span> <span class="dv">15</span>, <span class="dt">height =</span> <span class="dv">10</span>,<span class="dt">dpi =</span> <span class="dv">300</span>)</code></pre></div>
+<pre><code>## Error in grid.draw(plot): object &#39;plotCountsByYearBySex&#39; not found</code></pre>
+</div>
+<div id="saving-plots" class="section level1">
+<h1>Saving plots</h1>
+<p>save theme to apply to next plot</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grey_theme &lt;-<span class="kw">theme</span>(<span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">colour =</span> <span class="st">&quot;grey20&quot;</span>, <span class="dt">size =</span> <span class="dv">12</span>),
+                   <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">colour =</span> <span class="st">&quot;grey20&quot;</span>, <span class="dt">size =</span> <span class="dv">12</span>, 
+                                              <span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">hjust =</span> <span class="fl">0.5</span>, <span class="dt">vjust =</span> <span class="fl">0.5</span>),
+                   <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">16</span>))
+
+<span class="kw">ggplot</span>(surveys_complete, <span class="kw">aes</span>(<span class="dt">x =</span> genus, <span class="dt">y =</span> hindfoot_length)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">    </span>grey_theme</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/number-genus-year-with-right-labels-xfont-orientation-1.png" width="672" /></p>
+<div id="challenge-free-style" class="section level3">
+<h3>Challenge – free style</h3>
+</div>
+<div id="arranging-plots" class="section level2">
+<h2>Arranging plots</h2>
+<p>just demo this?</p>
+<p>figure that contains multiple plots using different variables or even different data frames</p>
+<p><strong><code>gridExtra</code></strong> package allows us to combine separate ggplots into a single figure using <code>grid.arrange()</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(gridExtra)</code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;gridExtra&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     combine</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spp_weight_boxplot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> surveys_complete, 
+                             <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> genus, <span class="dt">y =</span> weight)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;Genus&quot;</span>, <span class="dt">y=</span> <span class="st">&quot;Weight (g)&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_log10</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span>grey_theme
+
+spp_count_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> yearly_counts, 
+                         <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> n, <span class="dt">color =</span> genus)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;Year&quot;</span>, <span class="dt">y=</span> <span class="st">&quot;Abundance&quot;</span>) <span class="op">+</span>
+<span class="st">  </span>grey_theme
+
+<span class="kw">grid.arrange</span>(spp_weight_boxplot, spp_count_plot, <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">widths =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">6</span>))</code></pre></div>
+<pre><code>## Don&#39;t know how to automatically pick scale for object of type function. Defaulting to continuous.</code></pre>
+<pre><code>## Error: All columns in a tibble must be 1d or 2d objects:
+## * Column `y` is function</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">combo_plot &lt;-<span class="st"> </span><span class="kw">grid.arrange</span>(spp_weight_boxplot, spp_count_plot, <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">widths =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">6</span>))</code></pre></div>
+<pre><code>## Don&#39;t know how to automatically pick scale for object of type function. Defaulting to continuous.</code></pre>
+<pre><code>## Error: All columns in a tibble must be 1d or 2d objects:
+## * Column `y` is function</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggsave</span>(<span class="st">&quot;fig_output/combo_plot_abun_weight.png&quot;</span>, combo_plot, <span class="dt">width =</span> <span class="dv">10</span>, <span class="dt">dpi =</span> <span class="dv">300</span>)</code></pre></div>
+<pre><code>## Saving 10 x 5 in image</code></pre>
+<pre><code>## Error in grid.draw(plot): object &#39;combo_plot&#39; not found</code></pre>
+<p>Note: The parameters <code>width</code> and <code>height</code> also determine the font size in the saved plot.</p>
+<p>Resources:</p>
+<ul>
+<li>built-in themes <a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="uri">https://ggplot2.tidyverse.org/reference/ggtheme.html</a></li>
+<li>ggplot extensions: <a href="http://www.ggplot2-exts.org/gallery/" class="uri">http://www.ggplot2-exts.org/gallery/</a></li>
+<li>gallery of plots - click on plot to see code <a href="https://www.r-graph-gallery.com/portfolio/ggplot2-package/" class="uri">https://www.r-graph-gallery.com/portfolio/ggplot2-package/</a></li>
+<li>more plots with code: <a href="http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html#1.%20Correlation">http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html#1.%20Correlation</a></li>
+<li>material in general here is good: <a href="http://r-statistics.co/" class="uri">http://r-statistics.co/</a></li>
+<li>common plotting customisations <a href="http://r-statistics.co/ggplot2-cheatsheet.html" class="uri">http://r-statistics.co/ggplot2-cheatsheet.html</a></li>
+</ul>
+</div>
+</div>
+<div id="other" class="section level1">
+<h1>Other</h1>
+<p>The <code>+</code> in the <strong><code>ggplot2</code></strong> package is particularly useful because it allows you to modify existing <code>ggplot</code> objects. This means you can easily set up plot templates and conveniently explore different types of plots, so the above plot can also be generated with code like this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Assign plot to a variable</span>
+surveys_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> surveys_complete, 
+                       <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> weight, <span class="dt">y =</span> hindfoot_length))
+
+<span class="co"># Draw the plot</span>
+surveys_plot <span class="op">+</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">geom_point</span>()</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/first-ggplot-with-plus-1.png" width="672" /></p>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<hr />
+<blockquote>
+<h3 id="learning-objectives-1">Learning Objectives</h3>
+<ul>
+<li>Produce scatter plots, boxplots, and time series plots using ggplot.</li>
+<li>Describe what faceting is and apply faceting in ggplot.</li>
+<li>Modify the aesthetics of a ggplot plot (including axis labels and color).</li>
+<li>Build complex and customized plots from data in a data frame.</li>
+</ul>
+</blockquote>
+<hr />
+<div id="factors-can-improve-visualisation" class="section level2">
+<h2>Factors can improve visualisation</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(surveys_complete)</code></pre></div>
+<pre><code>## # A tibble: 6 x 13
+##   record_id month   day  year plot_id species_id sex   hindfoot_length
+##       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;           &lt;dbl&gt;
+## 1       845     5     6  1978       2 NL         M                  32
+## 2      1164     8     5  1978       2 NL         M                  34
+## 3      1261     9     4  1978       2 NL         M                  32
+## 4      1756     4    29  1979       2 NL         M                  33
+## 5      1818     5    30  1979       2 NL         M                  32
+## 6      1882     7     4  1979       2 NL         M                  32
+## # … with 5 more variables: weight &lt;dbl&gt;, genus &lt;chr&gt;, species &lt;chr&gt;,
+## #   taxa &lt;chr&gt;, plot_type &lt;chr&gt;</code></pre>
+<ul>
+<li>Using your <code>yearly_diversity</code> table, can you recreate the plot below, ensuring the order of the <code>plot_type</code> facets is as shown?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Make a vector with treatments in desired order</span>
+## this is optional, but makes it easier to read the code
+plot_type_order &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Control&quot;</span>,
+                     <span class="st">&quot;Short-term Krat Exclosure&quot;</span>, <span class="st">&quot;Long-term Krat Exclosure&quot;</span>,
+                     <span class="st">&quot;Rodent Exclosure&quot;</span>, <span class="st">&quot;Spectab exclosure&quot;</span>)
+
+<span class="co"># Factorise the `plot_type` variable with custom levels before plotting</span>
+yearly_diversity <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">plot_type =</span> <span class="kw">factor</span>(plot_type, <span class="dt">levels =</span> plot_type_order)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(year, n_species)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">colour =</span> sex)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">colour =</span> <span class="st">&quot;Plot Type&quot;</span>, <span class="dt">x =</span> <span class="st">&quot;Year&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;# species&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>( <span class="op">~</span><span class="st"> </span>plot_type)</code></pre></div>
+<pre><code>## Error in eval(lhs, parent, parent): object &#39;yearly_diversity&#39; not found</code></pre>
+</div>
+</div>
+
+<hr/>
+
+<p><a href="http://datacarpentry.org/">Data Carpentry</a>,
+  2018. <a href="LICENSE.html">License</a>. <a href="CONTRIBUTING.html">Contributing</a>. <br/>
+  Questions?  Feedback?
+  Please <a href="https://github.com/datacarpentry/R-ecology-lesson/issues/new">file
+  an issue on GitHub</a>. <br/> On
+  Twitter: <a href="https://twitter.com/datacarpentry">@datacarpentry</a></p>
+
+<!--  Algolia DocSearch -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script type="text/javascript"> docsearch({
+ apiKey: '4c64cef535ab2b7c8d1b73ed13f283e1',
+ indexName: 'datacarpentry',
+ inputSelector: '#search-box',
+ debug: false // Set debug to true if you want to inspect the dropdown
+});
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

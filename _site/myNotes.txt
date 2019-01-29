@@ -1,0 +1,20 @@
+to do: replace challenge 1 with a more general example
+
+
+i don't like violin plot example -- doesn't reveal a bi-modal distribution 
+
+
+We can also specify the colors directly inside the mapping provided in the `ggplot()` function. This will be seen by any geom layers and the mapping will be determined by the x- and y-axis set up in `aes()`.
+
+```{r color-by-species-2, purl=FALSE}
+ggplot(data = surveys_complete, mapping = aes(x = weight, y = hindfoot_length, color = species_id)) +
+    geom_point(alpha = 0.1)
+```
+
+
+ratio of foot length to weight by species -- does this change over time?
+
+change species to genus throughout?
+
+
+plots work but are pretty boring
