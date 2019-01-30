@@ -696,86 +696,6 @@ div.tocify {
 </div>
 </div>
 </div>
-<div id="factors---months" class="section level1">
-<h1>Factors - months</h1>
-<p>Does the number of animals observed in the genera “Onychomys” and “Perognathus” change from month to month across the years studied?</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">filter</span>(genus <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Onychomys&quot;</span>, <span class="st">&quot;Perognathus&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">group_by</span>(year, month, genus) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">observationsPerGenusPerMonthPerYear =</span> <span class="kw">n</span>())
-
-countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>month,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>month))<span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
-<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>get abbrev names of months</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">month.abb</code></pre></div>
-<pre><code>##  [1] &quot;Jan&quot; &quot;Feb&quot; &quot;Mar&quot; &quot;Apr&quot; &quot;May&quot; &quot;Jun&quot; &quot;Jul&quot; &quot;Aug&quot; &quot;Sep&quot; &quot;Oct&quot; &quot;Nov&quot;
-## [12] &quot;Dec&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">month.abb[<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">3</span>)]</code></pre></div>
-<pre><code>## [1] &quot;Jan&quot; &quot;May&quot; &quot;Mar&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear<span class="op">$</span>month <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre></div>
-<pre><code>## [1]  8  9 10 10 11 12</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">month.abb[countsPerMonthPerYear<span class="op">$</span>month] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre></div>
-<pre><code>## [1] &quot;Aug&quot; &quot;Sep&quot; &quot;Oct&quot; &quot;Oct&quot; &quot;Nov&quot; &quot;Dec&quot;</code></pre>
-<p>use this on our data</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">monthNames =</span> month.abb[month]) <span class="op">%&gt;%</span><span class="st">  </span><span class="co">#&lt;------------------ ADDED THIS</span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>monthNames,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>monthNames))<span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
-<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>need factors to get the right order</p>
-<p>Factors are very useful; contribute to making R particularly well suited to working with data</p>
-<ul>
-<li>Factors represent categorical data.</li>
-<li>ordered or unordered, default = alpha</li>
-<li>stored as integers associated with labels</li>
-<li>factors can only contain a pre-defined set of values, known as <em>levels</em></li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sex &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;male&quot;</span>))</code></pre></div>
-<p>R will assign - <code>1</code> to the level <code>&quot;female&quot;</code> (alphabetical order) - <code>2</code> to the level <code>&quot;male&quot;</code></p>
-<p><code>levels()</code></p>
-<p><code>nlevels()</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(sex)</code></pre></div>
-<pre><code>## [1] &quot;female&quot; &quot;male&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nlevels</span>(sex)</code></pre></div>
-<pre><code>## [1] 2</code></pre>
-<p>Sometimes, the order of the factors does not matter, other times you might want to specify the order because it is meaningful (e.g., “low”, “medium”, “high”), it improves your visualization, or it is required by a particular type of analysis. Here, one way to reorder our levels in the <code>sex</code> vector would be:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sex <span class="co"># current order</span></code></pre></div>
-<pre><code>## [1] male   female female male  
-## Levels: female male</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sex &lt;-<span class="st"> </span><span class="kw">factor</span>(sex, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>))
-sex <span class="co"># after re-ordering</span></code></pre></div>
-<pre><code>## [1] male   female female male  
-## Levels: male female</code></pre>
-<p>In R’s memory, these factors are represented by integers (1, 2, 3), but are more informative than integers because factors are self describing: <code>&quot;female&quot;</code>, <code>&quot;male&quot;</code> is more descriptive than <code>1</code>, <code>2</code>. Which one is “male”? You wouldn’t be able to tell just from the integer data. Factors, on the other hand, have this information built in. It is particularly helpful when there are many levels (like the species names in our example dataset).</p>
-<div id="converting-factors" class="section level3">
-<h3>Converting factors</h3>
-<p>If you need to convert a factor to a character vector, you use <code>as.character(x)</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.character</span>(sex)</code></pre></div>
-<pre><code>## [1] &quot;male&quot;   &quot;female&quot; &quot;female&quot; &quot;male&quot;</code></pre>
-<p><code>as.numeric()</code> BAD - gives levels</p>
-<p><code>as.character()</code> then <code>as.numeric()</code></p>
-<p>Another method is to use the <code>levels()</code> function. Compare:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">year_fct &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="dv">1990</span>, <span class="dv">1983</span>, <span class="dv">1977</span>, <span class="dv">1998</span>, <span class="dv">1990</span>))
-<span class="kw">as.numeric</span>(year_fct)               <span class="co"># Wrong! And there is no warning...</span></code></pre></div>
-<pre><code>## [1] 3 2 1 4 3</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(year_fct)) <span class="co"># Works...</span></code></pre></div>
-<pre><code>## [1] 1990 1983 1977 1998 1990</code></pre>
-<p>back to our example</p>
-<p>get the right order for months</p>
-<p>could make this a challenge:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">monthNames =</span> month.abb[month]) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">monthNames =</span> <span class="kw">factor</span>(monthNames,<span class="dt">ordered =</span> T,<span class="dt">levels =</span> month.abb)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#&lt;------------------ ADDED THIS</span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>monthNames,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>monthNames))<span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
-<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-</div>
-</div>
 <div id="plotting-time-series-data---groupsummarise-line-plot" class="section level1">
 <h1>Plotting time series data - group/summarise + line plot</h1>
 <p>Do the values change over years? within a year? seasonality?</p>
@@ -861,11 +781,11 @@ sex <span class="co"># after re-ordering</span></code></pre></div>
 <div id="challenge---sex-diff-by-species" class="section level3">
 <h3>Challenge - sex diff by species?</h3>
 </div>
-<div id="bonus-challenge-investigate-species-rf" class="section level3">
-<h3>Bonus challenge: investigate species “RF”</h3>
-</div>
 <div id="challenge---weight-by-year---recap" class="section level3">
 <h3>Challenge - weight by year - recap</h3>
+</div>
+<div id="bonus-challenge-investigate-species-rf" class="section level3">
+<h3>Bonus challenge: investigate species “RF”</h3>
 <p>Can skip: <code>facet_wrap</code> vs <code>facet_grid</code></p>
 <p>compare how the weights of males and females vs time, plot types</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># One column, facet by rows</span>
@@ -881,12 +801,115 @@ yearly_sex_weight &lt;-<span class="st"> </span>surveys_complete <span class="op
 </div>
 </div>
 </div>
+<div id="factors---months" class="section level1">
+<h1>Factors - months</h1>
+<p>Does the number of animals observed in the genera “Onychomys” and “Perognathus” change from month to month across the years studied?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(genus <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Onychomys&quot;</span>, <span class="st">&quot;Perognathus&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(year, month, genus) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">observationsPerGenusPerMonthPerYear =</span> <span class="kw">n</span>())
+
+countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>month,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>month))<span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>get abbrev names of months</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">month.abb</code></pre></div>
+<pre><code>##  [1] &quot;Jan&quot; &quot;Feb&quot; &quot;Mar&quot; &quot;Apr&quot; &quot;May&quot; &quot;Jun&quot; &quot;Jul&quot; &quot;Aug&quot; &quot;Sep&quot; &quot;Oct&quot; &quot;Nov&quot;
+## [12] &quot;Dec&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">month.abb[<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">3</span>)]</code></pre></div>
+<pre><code>## [1] &quot;Jan&quot; &quot;May&quot; &quot;Mar&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear<span class="op">$</span>month <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre></div>
+<pre><code>## [1]  8  9 10 10 11 12</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">month.abb[countsPerMonthPerYear<span class="op">$</span>month] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre></div>
+<pre><code>## [1] &quot;Aug&quot; &quot;Sep&quot; &quot;Oct&quot; &quot;Oct&quot; &quot;Nov&quot; &quot;Dec&quot;</code></pre>
+<p>use this on our data</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">monthNames =</span> month.abb[month]) <span class="op">%&gt;%</span><span class="st">  </span><span class="co">#&lt;------------------ ADDED THIS</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>monthNames,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>monthNames))<span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>need factors to get the right order</p>
+<p>Factors are very useful; contribute to making R particularly well suited to working with data</p>
+<ul>
+<li>Factors represent categorical data.</li>
+<li>ordered or unordered, default = alpha</li>
+<li>stored as integers associated with labels</li>
+<li>factors can only contain a pre-defined set of values, known as <em>levels</em></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sex &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;male&quot;</span>))</code></pre></div>
+<p>R will assign - <code>1</code> to the level <code>&quot;female&quot;</code> (alphabetical order) - <code>2</code> to the level <code>&quot;male&quot;</code></p>
+<p><code>levels()</code></p>
+<p><code>nlevels()</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(sex)</code></pre></div>
+<pre><code>## [1] &quot;female&quot; &quot;male&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nlevels</span>(sex)</code></pre></div>
+<pre><code>## [1] 2</code></pre>
+<p>Sometimes, the order of the factors does not matter, other times you might want to specify the order because it is meaningful (e.g., “low”, “medium”, “high”), it improves your visualization, or it is required by a particular type of analysis. Here, one way to reorder our levels in the <code>sex</code> vector would be:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sex <span class="co"># current order</span></code></pre></div>
+<pre><code>## [1] male   female female male  
+## Levels: female male</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sex &lt;-<span class="st"> </span><span class="kw">factor</span>(sex, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>))
+sex <span class="co"># after re-ordering</span></code></pre></div>
+<pre><code>## [1] male   female female male  
+## Levels: male female</code></pre>
+<p>In R’s memory, these factors are represented by integers (1, 2, 3), but are more informative than integers because factors are self describing: <code>&quot;female&quot;</code>, <code>&quot;male&quot;</code> is more descriptive than <code>1</code>, <code>2</code>. Which one is “male”? You wouldn’t be able to tell just from the integer data. Factors, on the other hand, have this information built in. It is particularly helpful when there are many levels (like the species names in our example dataset).</p>
+<div id="converting-factors" class="section level3">
+<h3>Converting factors</h3>
+<p>If you need to convert a factor to a character vector, you use <code>as.character(x)</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.character</span>(sex)</code></pre></div>
+<pre><code>## [1] &quot;male&quot;   &quot;female&quot; &quot;female&quot; &quot;male&quot;</code></pre>
+<p><code>as.numeric()</code> BAD - gives levels</p>
+<p><code>as.character()</code> then <code>as.numeric()</code></p>
+<p>Another method is to use the <code>levels()</code> function. Compare:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">year_fct &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="dv">1990</span>, <span class="dv">1983</span>, <span class="dv">1977</span>, <span class="dv">1998</span>, <span class="dv">1990</span>))
+<span class="kw">as.numeric</span>(year_fct)               <span class="co"># Wrong! And there is no warning...</span></code></pre></div>
+<pre><code>## [1] 3 2 1 4 3</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(year_fct)) <span class="co"># Works...</span></code></pre></div>
+<pre><code>## [1] 1990 1983 1977 1998 1990</code></pre>
+<p>back to our example</p>
+<p>get the right order for months</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYearToPlot &lt;-<span class="st"> </span>countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">monthNames =</span> month.abb[month]) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">monthNames =</span> <span class="kw">factor</span>(monthNames,<span class="dt">ordered =</span> T,<span class="dt">levels =</span> month.abb))  <span class="co">#&lt;------------------ ADDED THIS</span>
+
+<span class="kw">glimpse</span>(countsPerMonthPerYearToPlot)</code></pre></div>
+<pre><code>## Observations: 459
+## Variables: 5
+## Groups: year, month [279]
+## $ year                                &lt;dbl&gt; 1977, 1977, 1977, 1977, 1977…
+## $ month                               &lt;dbl&gt; 8, 9, 10, 10, 11, 12, 1, 2, …
+## $ genus                               &lt;chr&gt; &quot;Perognathus&quot;, &quot;Perognathus&quot;…
+## $ observationsPerGenusPerMonthPerYear &lt;int&gt; 6, 3, 1, 1, 6, 6, 3, 5, 1, 9…
+## $ monthNames                          &lt;ord&gt; Aug, Sep, Oct, Oct, Nov, Dec…</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYearToPlot <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>monthNames,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>monthNames))<span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>how to detect and avoid factors - glimpse() or str() - use read_csv not read.csv - strings_as_factors=F</p>
+</div>
+<div id="challenge---reorder-genera-in-plot" class="section level2">
+<h2>Challenge - reorder genera in plot</h2>
+<p>Use a factor to reorder the genera in the plot we just made so that “Perognathus” comes before “Onychomys”</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYearToPlot <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">genus =</span> <span class="kw">factor</span>(genus,<span class="dt">ordered =</span> T,<span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;Perognathus&quot;</span>, <span class="st">&quot;Onychomys&quot;</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>monthNames,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>monthNames))<span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+</div>
 <div id="themes-and-customization" class="section level1">
 <h1>Themes and Customization</h1>
 <p>lets use that species plot and fix it up</p>
 <p>build this up 1 line at a time or share code and walk through</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plotCountsByYearBySex &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> countsByYearBySexBySpecies,
-                                <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> n, <span class="dt">color =</span> sex)) <span class="op">+</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plotCountsByYearBySexBySpecies &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">group_by</span>(year, sex, species_id) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">n =</span> <span class="kw">n</span>()) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> n, <span class="dt">color =</span> sex)) <span class="op">+</span>
 <span class="st">     </span><span class="kw">geom_line</span>() <span class="op">+</span>
 <span class="st">     </span><span class="kw">facet_wrap</span>(.<span class="op">~</span><span class="st"> </span>species_id) <span class="op">+</span>
 <span class="st">    </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Observed genera in time&quot;</span>, <span class="co"># informative title and axis labels</span>
@@ -898,23 +921,25 @@ yearly_sex_weight &lt;-<span class="st"> </span>surveys_complete <span class="op
           <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">colour =</span> <span class="st">&quot;grey20&quot;</span>, <span class="dt">size =</span> <span class="dv">12</span>),
           <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">colour =</span> <span class="st">&quot;grey20&quot;</span>, <span class="dt">size =</span> <span class="dv">12</span>, 
                                      <span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">hjust =</span> <span class="fl">0.5</span>, <span class="dt">vjust =</span> <span class="fl">0.5</span>) <span class="co"># rotate x axis, justify</span>
-          )</code></pre></div>
-<pre><code>## Error in ggplot(data = countsByYearBySexBySpecies, mapping = aes(x = year, : object &#39;countsByYearBySexBySpecies&#39; not found</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plotCountsByYearBySex</code></pre></div>
-<pre><code>## Error in eval(expr, envir, enclos): object &#39;plotCountsByYearBySex&#39; not found</code></pre>
+          )
+
+plotCountsByYearBySexBySpecies</code></pre></div>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/number-species-year-with-full-theme-1.png" width="672" /></p>
 <p>all themes: <a href="http://docs.ggplot2.org/current/ggtheme.html" class="uri">http://docs.ggplot2.org/current/ggtheme.html</a></p>
 <p>popular: <code>theme_minimal()</code> , <code>theme_light()</code></p>
 <p><code>ggplot2</code> cheat sheet to improve the plot.</p>
+</div>
+<div id="saving-plots" class="section level1">
+<h1>Saving plots</h1>
 <p>save plot e.g. for manuscript</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir.create</span>(<span class="dt">path =</span> <span class="st">&quot;fig_output&quot;</span>)</code></pre></div>
 <pre><code>## Warning in dir.create(path = &quot;fig_output&quot;): &#39;fig_output&#39; already exists</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggsave</span>(<span class="dt">filename =</span> <span class="st">&quot;fig_output/countsByYearBySex.png&quot;</span>,
-       <span class="dt">plot =</span> plotCountsByYearBySex, 
+       <span class="dt">plot =</span> plotCountsByYearBySexBySpecies, 
        <span class="dt">width =</span> <span class="dv">15</span>, <span class="dt">height =</span> <span class="dv">10</span>,<span class="dt">dpi =</span> <span class="dv">300</span>)</code></pre></div>
-<pre><code>## Error in grid.draw(plot): object &#39;plotCountsByYearBySex&#39; not found</code></pre>
 </div>
-<div id="saving-plots" class="section level1">
-<h1>Saving plots</h1>
+<div id="resusing-custom-themes" class="section level1">
+<h1>Resusing custom themes</h1>
 <p>save theme to apply to next plot</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grey_theme &lt;-<span class="kw">theme</span>(<span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">colour =</span> <span class="st">&quot;grey20&quot;</span>, <span class="dt">size =</span> <span class="dv">12</span>),
                    <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">colour =</span> <span class="st">&quot;grey20&quot;</span>, <span class="dt">size =</span> <span class="dv">12</span>, 
@@ -986,7 +1011,7 @@ surveys_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span 
 surveys_plot <span class="op">+</span><span class="st"> </span>
 <span class="st">    </span><span class="kw">geom_point</span>()</code></pre></div>
 <p><img src="short_04-visualization-ggplot2_files/figure-html/first-ggplot-with-plus-1.png" width="672" /></p>
-<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="short_04-visualization-ggplot2_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <hr />
 <blockquote>
 <h3 id="learning-objectives-1">Learning Objectives</h3>

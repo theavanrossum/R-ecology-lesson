@@ -11,7 +11,7 @@
 
 <meta name="author" content="Thea Van Rossum" />
 
-<meta name="date" content="2019-01-29" />
+<meta name="date" content="2019-01-30" />
 
 <title>Data visualization with ggplot2: Challenges</title>
 
@@ -559,7 +559,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Data visualization with ggplot2: Challenges</h1>
 <h4 class="author"><em>Thea Van Rossum</em></h4>
-<h4 class="date"><em>2019-01-29</em></h4>
+<h4 class="date"><em>2019-01-30</em></h4>
 
 </div>
 
@@ -568,13 +568,13 @@ div.tocify {
 <p>load the data from prev. lesson</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys_complete &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;/Users/rossum/Dropbox/teaching/Workshops/SCW-DCW/lessonsDC/R-ecology-lesson/data_output/surveys_complete.csv&quot;</span>)</code></pre></div>
 <div id="challenge---scatter-plot" class="section level1">
-<h1><span class="header-section-number">1</span> Challenge - scatter plot</h1>
+<h1><span class="header-section-number">1</span> Challenge - Scatter plot</h1>
 <p>Use what you just learned to create a scatter plot of <code>weight</code> over <code>genus</code> with the field plot types showing in different colors. Is this a good way to show this type of data?</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> surveys_complete, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> genus, <span class="dt">y =</span> weight)) <span class="op">+</span>
 <span class="st">   </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> plot_type))</code></pre></div>
 </div>
-<div id="bonus-challenge---overplotting" class="section level1">
-<h1><span class="header-section-number">2</span> Bonus challenge - overplotting</h1>
+<div id="bonus-challenge---overplotting-in-a-scatter-plot" class="section level1">
+<h1><span class="header-section-number">2</span> Bonus challenge - Overplotting in a scatter plot</h1>
 <p>With a <code>geom_point()</code> plot, we couldn’t tell if 1 or 1000 points were drawn at the same location. When points overlap, this is called “overplotting” and it can hide information in a plot. We can avoid this several ways. Try recreating the weight vs hindfoot_length scatter plot with the following changes</p>
 <ul>
 <li>try replacing geom_point() with geom_bin2d()</li>
@@ -599,7 +599,7 @@ div.tocify {
 <hr />
 </div>
 <div id="challenge-violoin-plot" class="section level1">
-<h1><span class="header-section-number">3</span> Challenge: violoin plot</h1>
+<h1><span class="header-section-number">3</span> Challenge: Violoin plot</h1>
 <p>Boxplots are useful summaries, but they hide the <em>shape</em> of the distribution. For example, if the distribution is bimodal, we would not see it in a boxplot. An alternative to the boxplot is the violin plot, where the shape (of the density of points) is drawn.</p>
 <ul>
 <li>Replace the box plot with a violin plot; see <code>geom_violin()</code>.</li>
@@ -618,8 +618,8 @@ div.tocify {
 <p>check out <a href="https://www.r-graph-gallery.com/all-graphs/" class="uri">https://www.r-graph-gallery.com/all-graphs/</a> Is there another libary that you could download and use to make some nice plots?</p>
 <hr />
 </div>
-<div id="challenge-line-plot---median-weight-by-month" class="section level1">
-<h1><span class="header-section-number">5</span> Challenge: line plot - median weight by month</h1>
+<div id="challenge-median-weight-by-month" class="section level1">
+<h1><span class="header-section-number">5</span> Challenge: Median weight by month</h1>
 <p>Does the median weight per genus change over the year? e.g. are there some months when animals tend to be heavier? For simplicity, consider the median weight across all years.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">medianWeightByGenusByMonth &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(genus, month) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -629,8 +629,8 @@ div.tocify {
        <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> month, <span class="dt">y =</span> medianWeight, <span class="dt">color =</span> genus)) <span class="op">+</span>
 <span class="st">    </span><span class="kw">geom_line</span>()</code></pre></div>
 </div>
-<div id="bonus-challenge-variability-in-trend" class="section level1">
-<h1><span class="header-section-number">6</span> Bonus challenge: variability in trend</h1>
+<div id="bonus-challenge-variability-of-median-weight-by-month" class="section level1">
+<h1><span class="header-section-number">6</span> Bonus challenge: variability of median weight by month</h1>
 <p>Is the trend that we saw in the previous plot consistent for most years sampled?</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">medianWeightByGenusByMonthByYear &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(year, genus, month) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -644,9 +644,9 @@ div.tocify {
 <span class="co"># Can you find a better way to visualise an answer?</span></code></pre></div>
 <hr />
 </div>
-<div id="challenge---sex-diff-by-species" class="section level1">
-<h1><span class="header-section-number">7</span> Challenge - sex diff by species?</h1>
-<p>How does the abundance of each <em>species</em> change through the years for females and males. (Use the variable <code>species_id</code>)</p>
+<div id="challenge---do-any-species-have-differences-in-abundance-by-sex" class="section level1">
+<h1><span class="header-section-number">7</span> Challenge - do any species have differences in abundance by sex?</h1>
+<p>How does the abundance of each <em>species</em> change over the years for females and males. (Use the variable <code>species_id</code>)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsByYearBySexBySpecies &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(year, species_id, sex) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">n</span>())
@@ -655,16 +655,9 @@ div.tocify {
 <span class="st">     </span><span class="kw">geom_line</span>() <span class="op">+</span>
 <span class="st">     </span><span class="kw">facet_wrap</span>(.<span class="op">~</span><span class="st"> </span>species_id)</code></pre></div>
 </div>
-<div id="bonus-challenge-investigate-species-rf" class="section level1">
-<h1><span class="header-section-number">8</span> Bonus challenge: investigate species “RF”</h1>
-<p>In the line plot above, species “RF” looks really weird. Take a closer look a the data for this species. Why does it look this way? You might want to try a “stacked bar chart” (see the section “Histogram on a categorical variable” on this site: <a href="http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html" class="uri">http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html</a>)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys_complete <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">filter</span>(species_id <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;RF&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>year,<span class="dt">fill=</span>sex))<span class="op">+</span><span class="kw">geom_bar</span>()</code></pre></div>
-</div>
 <div id="challenge-weight-by-year" class="section level1">
-<h1><span class="header-section-number">9</span> Challenge: weight by year</h1>
-<p>Use what you just learned to create a plot that depicts how the average weight of each genus changed through the years.</p>
+<h1><span class="header-section-number">8</span> Challenge: weight by year</h1>
+<p>Use what you learned today to create a plot that depicts how the average weight of each genus changed over the years.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"> yearly_weight &lt;-<span class="st"> </span>surveys_complete <span class="op">%&gt;%</span>
 <span class="st">                 </span><span class="kw">group_by</span>(year, genus) <span class="op">%&gt;%</span>
 <span class="st">                  </span><span class="kw">summarize</span>(<span class="dt">weightMean =</span> <span class="kw">mean</span>(weight))
@@ -672,10 +665,27 @@ div.tocify {
 <span class="st">    </span><span class="kw">geom_line</span>() <span class="op">+</span>
 <span class="st">    </span><span class="kw">facet_wrap</span>(.<span class="op">~</span><span class="st"> </span>genus) <span class="op">+</span>
 <span class="st">    </span><span class="kw">theme_bw</span>()</code></pre></div>
+</div>
+<div id="bonus-challenge-investigate-the-species-rf" class="section level1">
+<h1><span class="header-section-number">9</span> Bonus challenge: investigate the species “RF”</h1>
+<p>In the count-by-year-by-sex-by-species line plot above, species “RF” looks really weird. Take a closer look a the data for this species. Why does it look this way? You might want to try a “stacked bar chart” (see the section “Histogram on a categorical variable” on this site: <a href="http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html" class="uri">http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html</a>)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys_complete <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(species_id <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;RF&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>year,<span class="dt">fill=</span>sex))<span class="op">+</span><span class="kw">geom_bar</span>()</code></pre></div>
+<hr />
+</div>
+<div id="challenge---reorder-genera-in-plot-using-a-factor" class="section level1">
+<h1><span class="header-section-number">10</span> Challenge - reorder genera in plot using a factor</h1>
+<p>Use a factor to reorder the genera in the plot we just made so that “Perognathus” comes before “Onychomys”</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYearToPlot <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">genus =</span> <span class="kw">factor</span>(genus,<span class="dt">ordered =</span> T,<span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;Perognathus&quot;</span>, <span class="st">&quot;Onychomys&quot;</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>monthNames,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>monthNames))<span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
 <hr />
 </div>
 <div id="challenge-free-style" class="section level1">
-<h1><span class="header-section-number">10</span> Challenge: free style</h1>
+<h1><span class="header-section-number">11</span> Challenge: free style</h1>
 <p>With all of this information in hand, please take another five minutes to either improve one of the plots generated in this exercise or create a beautiful graph of your own. Use the RStudio <a href="https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf"><strong><code>ggplot2</code></strong> cheat sheet</a> for inspiration. Here are some ideas:</p>
 <ul>
 <li>See if you can change the thickness of the lines.</li>

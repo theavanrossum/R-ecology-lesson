@@ -171,6 +171,126 @@ ggplot(mapping = aes(x = genus, y = weight, color = genus)) +
 ### Challenge: box plot alternatives (bonus)
 
 
+# Plotting time series data - group/summarise + line plot
+
+Do the values change over years? within a year? seasonality?
+
+## Have the genus abundances changed over the years?
+
+abundace = number of observations per genus per year
+
+"per" -> group_by()
+
+```{r, purl=FALSE}
+yearly_counts <- surveys_complete %>%
+  group_by(year, genus) %>% 
+  summarise(countsPerGenusPerYear = n())
+
+```
+
+<!-- could also use count() -->
+
+visualize as line plot with years on x and counts on y
+
+```{r first-time-series, purl=FALSE}
+
+ggplot(data = yearly_counts, mapping = aes(x = year, y = countsPerGenusPerYear)) +
+     geom_line()
+```
+
+woa! what?
+let's look at data for why
+
+```{r}
+head(yearly_counts, n=20)
+```
+
+need to group data by genus then draw lines
+
+```{r time-series-by-genus, purl=FALSE}
+ggplot(data = yearly_counts, 
+       mapping = aes(x = year, y = countsPerGenusPerYear, group = genus)) +
+    geom_line()
+```
+
+which is which? add colors per genus
+
+```{r time-series-with-colors, purl=FALSE}
+ggplot(data = yearly_counts, 
+       mapping = aes(x = year, y = countsPerGenusPerYear, color = genus)) +
+    geom_line()
+```
+
+
+### Challenge: line plot - median weight by month
+
+### Bonus challenge: variability in trend
+
+
+
+# Faceting
+
+## improve visibility of previous genus/time plot
+
+split one plot into multiple plots based on a category in the data
+
+```{r first-facet, purl=FALSE}
+
+ggplot(data = yearly_counts, 
+       mapping = aes(x = year, y = countsPerGenusPerYear)) +
+    geom_line() +
+    facet_wrap(.~genus)
+```
+
+## Are there sex differences in the time trends?
+
+back to the data:
+
+```{r, purl=FALSE}
+
+countsByYearBySex <- surveys_complete %>%
+  group_by(year, genus, sex) %>% 
+  summarise(countsPerGenusPerYearPerSex = n())
+
+```
+
+plot it
+
+```{r facet-by-genus-and-sex, purl=FALSE}
+ ggplot(data = countsByYearBySex, 
+        mapping = aes(x = year, y = countsPerGenusPerYearPerSex, color = sex)) +
+     geom_line() +
+     facet_wrap(.~ genus)
+```
+
+
+### Challenge - sex diff by species?
+
+### Challenge - weight by year - recap
+
+### Bonus challenge: investigate species "RF"
+
+
+
+
+
+Can skip: `facet_wrap` vs `facet_grid`
+
+compare how the weights of males and females vs time, plot types
+
+```{r average-weight-time-facet-sex-rows, purl=FALSE}
+# One column, facet by rows
+yearly_sex_weight <- surveys_complete %>%
+    group_by(year, sex, genus, plot_type) %>%
+    summarize(avg_weight = mean(weight))
+
+ggplot(data = yearly_sex_weight, 
+       mapping = aes(x = year, y = avg_weight, color = genus)) +
+    geom_line() +
+    facet_grid(sex ~ plot_type)
+```
+
+
 # Factors - months
 
 Does the number of animals observed in the genera "Onychomys" and "Perognathus" change from month to month across the years studied?
@@ -282,138 +402,38 @@ back to our example
 
 get the right order for months
 
-could make this a challenge:
-
 ```{r}
 
-countsPerMonthPerYear %>% 
+countsPerMonthPerYearToPlot <- countsPerMonthPerYear %>% 
   mutate(monthNames = month.abb[month]) %>% 
-  mutate(monthNames = factor(monthNames,ordered = T,levels = month.abb)) %>% #<------------------ ADDED THIS
+  mutate(monthNames = factor(monthNames,ordered = T,levels = month.abb))  #<------------------ ADDED THIS
+
+glimpse(countsPerMonthPerYearToPlot)
+
+countsPerMonthPerYearToPlot %>% 
   ggplot(aes(x=monthNames,y=observationsPerGenusPerMonthPerYear,group=monthNames))+
   geom_boxplot() +
   facet_wrap(. ~ genus)
   
 ```
 
+how to detect and avoid factors
+- glimpse() or str()
+- use read_csv not read.csv
+- strings_as_factors=F
 
+## Challenge - reorder genera in plot
 
-
-# Plotting time series data - group/summarise + line plot
-
-Do the values change over years? within a year? seasonality?
-
-## Have the genus abundances changed over the years?
-
-abundace = number of observations per genus per year
-
-"per" -> group_by()
-
-```{r, purl=FALSE}
-yearly_counts <- surveys_complete %>%
-  group_by(year, genus) %>% 
-  summarise(countsPerGenusPerYear = n())
-
-```
-
-<!-- could also use count() -->
-
-visualize as line plot with years on x and counts on y
-
-```{r first-time-series, purl=FALSE}
-
-ggplot(data = yearly_counts, mapping = aes(x = year, y = countsPerGenusPerYear)) +
-     geom_line()
-```
-
-woa! what?
-let's look at data for why
+Use a factor to reorder the genera in the plot we just made so that "Perognathus" comes before "Onychomys"
 
 ```{r}
-head(yearly_counts, n=20)
+countsPerMonthPerYearToPlot %>% 
+  mutate(genus = factor(genus,ordered = T,levels = c("Perognathus", "Onychomys"))) %>% 
+  ggplot(aes(x=monthNames,y=observationsPerGenusPerMonthPerYear,group=monthNames))+
+    geom_boxplot() +
+    facet_wrap(. ~ genus)
 ```
 
-need to group data by genus then draw lines
-
-```{r time-series-by-genus, purl=FALSE}
-ggplot(data = yearly_counts, 
-       mapping = aes(x = year, y = countsPerGenusPerYear, group = genus)) +
-    geom_line()
-```
-
-which is which? add colors per genus
-
-```{r time-series-with-colors, purl=FALSE}
-ggplot(data = yearly_counts, 
-       mapping = aes(x = year, y = countsPerGenusPerYear, color = genus)) +
-    geom_line()
-```
-
-
-### Challenge: line plot - median weight by month
-
-### Bonus challenge: variability in trend
-
-
-
-# Faceting
-
-## improve visibility of previous genus/time plot
-
-split one plot into multiple plots based on a category in the data
-
-```{r first-facet, purl=FALSE}
-
-ggplot(data = yearly_counts, 
-       mapping = aes(x = year, y = countsPerGenusPerYear)) +
-    geom_line() +
-    facet_wrap(.~genus)
-```
-
-## Are there sex differences in the time trends?
-
-back to the data:
-
-```{r, purl=FALSE}
-
-countsByYearBySex <- surveys_complete %>%
-  group_by(year, genus, sex) %>% 
-  summarise(countsPerGenusPerYearPerSex = n())
-
-```
-
-plot it
-
-```{r facet-by-genus-and-sex, purl=FALSE}
- ggplot(data = countsByYearBySex, 
-        mapping = aes(x = year, y = countsPerGenusPerYearPerSex, color = sex)) +
-     geom_line() +
-     facet_wrap(.~ genus)
-```
-
-
-### Challenge - sex diff by species?
-
-### Bonus challenge: investigate species "RF"
-
-### Challenge - weight by year - recap
-
-
-
-Can skip: `facet_wrap` vs `facet_grid`
-
-compare how the weights of males and females vs time, plot types
-
-```{r average-weight-time-facet-sex-rows, purl=FALSE}
-# One column, facet by rows
-yearly_sex_weight <- surveys_complete %>%
-    group_by(year, sex, genus, plot_type) %>%
-    summarize(avg_weight = mean(weight))
-
-ggplot(data = yearly_sex_weight, 
-       mapping = aes(x = year, y = avg_weight, color = genus)) +
-    geom_line() +
-    facet_grid(sex ~ plot_type)
-```
 
 
 # Themes and Customization
@@ -424,8 +444,10 @@ build this up 1 line at a time or share code and walk through
 
 ```{r number-species-year-with-full-theme, purl=FALSE}
 
-plotCountsByYearBySex <- ggplot(data = countsByYearBySexBySpecies,
-                                mapping = aes(x = year, y = n, color = sex)) +
+plotCountsByYearBySexBySpecies <- surveys_complete %>%
+    group_by(year, sex, species_id) %>%
+    summarize(n = n()) %>% 
+  ggplot(mapping = aes(x = year, y = n, color = sex)) +
      geom_line() +
      facet_wrap(.~ species_id) +
     labs(title = "Observed genera in time", # informative title and axis labels
@@ -439,7 +461,7 @@ plotCountsByYearBySex <- ggplot(data = countsByYearBySexBySpecies,
                                      angle = 90, hjust = 0.5, vjust = 0.5) # rotate x axis, justify
           )
 
-plotCountsByYearBySex
+plotCountsByYearBySexBySpecies
 ```
 
 
@@ -449,18 +471,20 @@ popular: `theme_minimal()` , `theme_light()`
 
 `ggplot2` cheat sheet to improve the plot.
 
+# Saving plots
+
 save plot e.g. for manuscript 
 
 ```{r}
 
 dir.create(path = "fig_output")
 ggsave(filename = "fig_output/countsByYearBySex.png",
-       plot = plotCountsByYearBySex, 
+       plot = plotCountsByYearBySexBySpecies, 
        width = 15, height = 10,dpi = 300)
 
 ```
 
-# Saving plots
+# Resusing custom themes
 
 save theme to apply to next plot
 

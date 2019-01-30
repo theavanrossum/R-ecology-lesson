@@ -28,7 +28,7 @@ surveys_complete <- read_csv("/Users/rossum/Dropbox/teaching/Workshops/SCW-DCW/l
 
 
 
-# Challenge - scatter plot
+# Challenge - Scatter plot
 
 Use what you just learned to create a scatter plot of `weight` over
 `genus` with the field plot types showing in different colors. Is this a good
@@ -40,7 +40,7 @@ ggplot(data = surveys_complete, mapping = aes(x = genus, y = weight)) +
 ```
 
 
-# Bonus challenge - overplotting
+# Bonus challenge - Overplotting in a scatter plot
 
 With a `geom_point()` plot, we couldn't tell if 1 or 1000 points were drawn at the same location. When points overlap, this is called "overplotting" and it can hide information in a plot. We can avoid this several ways. Try recreating the weight vs hindfoot_length scatter plot with the following changes
 
@@ -72,7 +72,7 @@ ggplot(data = surveys_complete, mapping = aes(x = weight, y = hindfoot_length)) 
 
 ---------------------------------
 
-# Challenge: violoin plot
+# Challenge: Violoin plot
 
 Boxplots are useful summaries, but they hide the *shape* of the distribution. For
 example, if the distribution is bimodal, we would not see it in a
@@ -132,7 +132,7 @@ Is there another libary that you could download and use to make some nice plots?
 
 ------------------------------------------------------
 
-# Challenge: line plot - median weight by month
+# Challenge: Median weight by month
 
 Does the median weight per genus change over the year? e.g. are there some months when animals tend to be heavier? For simplicity, consider the median weight across all years. 
 
@@ -148,7 +148,7 @@ ggplot(data = medianWeightByGenusByMonth,
 
 ```
 
-# Bonus challenge: variability in trend
+# Bonus challenge: variability of median weight by month
 
 Is the trend that we saw in the previous plot consistent for most years sampled? 
 
@@ -170,9 +170,9 @@ ggplot(data = medianWeightByGenusByMonthByYear,
 
 -------------------------------------------
 
-# Challenge - sex diff by species?
+# Challenge - do any species have differences in abundance by sex?
 
-How does the abundance of each *species* change through the years for females and males. (Use the variable `species_id`)
+How does the abundance of each *species* change over the years for females and males. (Use the variable `species_id`)
 
 ```{r}
 
@@ -186,22 +186,10 @@ countsByYearBySexBySpecies <- surveys_complete %>%
  
 ```
 
-# Bonus challenge: investigate species "RF"
-
-In the line plot above, species "RF" looks really weird. Take a closer look a the data for this species. Why does it look this way? 
-You might want to try a "stacked bar chart" (see the section "Histogram on a categorical variable" on this site: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
-
-```{r}
-surveys_complete %>% 
-  filter(species_id %in% c("RF")) %>% 
-  ggplot(aes(x=year,fill=sex))+geom_bar()
-```
-
-
 # Challenge: weight by year 
 
-Use what you just learned to create a plot that depicts how the average weight
-of each genus changed through the years.
+Use what you learned today to create a plot that depicts how the average weight
+of each genus changed over the years.
 
 ```{r average-weight-time-series, answer=TRUE, purl=FALSE}
  yearly_weight <- surveys_complete %>%
@@ -212,6 +200,32 @@ of each genus changed through the years.
     facet_wrap(.~ genus) +
     theme_bw()
 ```
+
+# Bonus challenge: investigate the species "RF"
+
+In the count-by-year-by-sex-by-species line plot above, species "RF" looks really weird. Take a closer look a the data for this species. Why does it look this way? 
+You might want to try a "stacked bar chart" (see the section "Histogram on a categorical variable" on this site: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
+
+```{r}
+surveys_complete %>% 
+  filter(species_id %in% c("RF")) %>% 
+  ggplot(aes(x=year,fill=sex))+geom_bar()
+```
+
+----------------------------------------------
+
+# Challenge - reorder genera in plot using a factor
+
+Use a factor to reorder the genera in the plot we just made so that "Perognathus" comes before "Onychomys"
+
+```{r}
+countsPerMonthPerYearToPlot %>% 
+  mutate(genus = factor(genus,ordered = T,levels = c("Perognathus", "Onychomys"))) %>% 
+  ggplot(aes(x=monthNames,y=observationsPerGenusPerMonthPerYear,group=monthNames))+
+    geom_boxplot() +
+    facet_wrap(. ~ genus)
+```
+
 
 -----------------------------
 
