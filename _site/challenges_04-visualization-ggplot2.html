@@ -676,10 +676,24 @@ div.tocify {
 </div>
 <div id="challenge---reorder-genera-in-plot-using-a-factor" class="section level1">
 <h1><span class="header-section-number">10</span> Challenge - reorder genera in plot using a factor</h1>
-<p>Use a factor to reorder the genera in the plot we just made so that “Perognathus” comes before “Onychomys”</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYearToPlot <span class="op">%&gt;%</span><span class="st"> </span>
+<p>Using the dataframe we just created, modify the plot we just made to reorder the genera so that “Perognathus” comes before “Onychomys”. Hint: use an ordered factor like we did for <code>monthNames</code>.</p>
+<p>Continue to modify the tibble we already created:</p>
+<pre><code>countsPerMonthPerYear &lt;- surveys_complete %&gt;%
+  filter(genus %in% c(&quot;Onychomys&quot;, &quot;Perognathus&quot;)) %&gt;% 
+  group_by(year, month, genus) %&gt;% 
+  summarise(observationsPerGenusPerMonthPerYear = n()) %&gt;% 
+  mutate(monthNames = month.abb[month]) %&gt;% 
+  mutate(monthNames = factor(monthNames,ordered = T,levels = month.abb)) 
+</code></pre>
+<p>To change the order of the genera in this plot:</p>
+<pre><code>countsPerMonthPerYearToPlot %&gt;% 
+  ggplot(aes(x=monthNames,y=observationsPerGenusPerMonthPerYear,group=monthNames))+
+  geom_boxplot() +
+  facet_wrap(. ~ genus)
+</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countsPerMonthPerYear <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">genus =</span> <span class="kw">factor</span>(genus,<span class="dt">ordered =</span> T,<span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;Perognathus&quot;</span>, <span class="st">&quot;Onychomys&quot;</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>monthNames,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>monthNames))<span class="op">+</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>month,<span class="dt">y=</span>observationsPerGenusPerMonthPerYear,<span class="dt">group=</span>month))<span class="op">+</span>
 <span class="st">    </span><span class="kw">geom_boxplot</span>() <span class="op">+</span>
 <span class="st">    </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>genus)</code></pre></div>
 <hr />
